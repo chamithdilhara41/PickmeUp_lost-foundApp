@@ -43,7 +43,7 @@ PickMeUp is a **mobile application** that helps users **report, track, and find 
 
 | Lost Items | Add Lost Item | Found Item | Add Found Item |
 |------------|----------------|------------|----------------|
-| ![Lost Items](screenshots/lostitems.png) | ![Add Lost Item](screenshots/addLostItem.png) | ![Found Item](screenshots/founditem.png) | ![Add Found Item](screenshots/addFoundItem.png) |
+| ![Lost Items](screenshots/lostItems.png) | ![Add Lost Item](screenshots/addLostItem.png) | ![Found Item](screenshots/foundItem.png) | ![Add Found Item](screenshots/addFoundItem.png) |
 
 ---
 
