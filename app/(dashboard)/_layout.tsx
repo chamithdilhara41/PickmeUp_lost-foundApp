@@ -14,15 +14,19 @@ const DashboardLayout = () => {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#007AFF",
-        tabBarInactiveTintColor: "#999",
+        tabBarActiveTintColor: "#3B82F6", // Tailwind blue-500
+        tabBarInactiveTintColor: "#6B7280", // Tailwind gray-500
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: "#ccc"
+          backgroundColor: "#FFFFFF", // Tailwind white
+          borderTopWidth: 1,
+          borderTopColor: "#E5E7EB", // Tailwind gray-200
+          height: 100, // h-20
+          paddingTop: 8, // pt-2
+          paddingBottom: 20, // pb-5
         }
       }}
     >
-      {/* (obj.name) ===  ({name}) */}
       {tabs.map(({ name, icon, label }) => (
         <Tabs.Screen
           key={name}
@@ -31,13 +35,17 @@ const DashboardLayout = () => {
             title: label,
             tabBarIcon: ({ color, size }) => (
               <MaterialIcons name={icon} color={color} size={size} />
-            )
+            ),
+            tabBarLabelStyle: {
+              fontSize: 12, // text-xs
+              fontWeight: "500", // font-medium
+              marginTop: 4, // mt-1
+            }
           }}
         />
       ))}
     </Tabs>
   )
 }
-
 
 export default DashboardLayout
