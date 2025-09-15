@@ -9,6 +9,7 @@ import {
   TextInput,
   ActivityIndicator,
   Alert,
+  Linking,
 } from "react-native";
 import { useEffect, useState, useMemo } from "react";
 import { lostRef, deleteLost } from "@/services/lostService";
@@ -285,9 +286,6 @@ const LostScreen = () => {
                 <Text className="text-lg font-bold text-blue-700">
                   {lost.title}
                 </Text>
-                <Text className="text-sm text-gray-700 mb-1" numberOfLines={2}>
-                  {lost.description}
-                </Text>
 
                 {lost.location && (
                   <View className="flex-row items-center mt-1">
@@ -353,57 +351,106 @@ const LostScreen = () => {
       >
         <View className="flex-1 bg-black/60 justify-center items-center p-4">
           <View className="w-full bg-white rounded-xl p-4 max-h-[80%] shadow-lg">
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
               {selectedLost && (
                 <>
+                  {/* Title */}
                   <Text className="text-2xl font-bold text-blue-700 mb-3">
                     {selectedLost.title}
                   </Text>
 
-                  {selectedLost.serverImageUrls && selectedLost.serverImageUrls.length > 0 && (
-                    <ScrollView 
-                      horizontal 
-                      className="mb-3"
-                      showsHorizontalScrollIndicator={false}
-                    >
-                      {selectedLost.serverImageUrls.map((url, index) => (
-                        <Image
-                          key={index}
-                          source={{ uri: url }}
-                          className="w-52 h-52 mr-2 rounded-lg"
-                          resizeMode="cover"
-                        />
-                      ))}
-                    </ScrollView>
-                  )}
+                  {/* Images */}
+                  {selectedLost.serverImageUrls &&
+                    selectedLost.serverImageUrls.length > 0 && (
+                      <ScrollView
+                        horizontal
+                        className="mb-3"
+                        showsHorizontalScrollIndicator={false}
+                      >
+                        {selectedLost.serverImageUrls.map((url, index) => (
+                          <Image
+                            key={index}
+                            source={{ uri: url }}
+                            className="w-52 h-52 mr-2 rounded-lg"
+                            resizeMode="cover"
+                          />
+                        ))}
+                      </ScrollView>
+                    )}
 
-                  <Text className="text-base mb-2">
+                  {/* Description */}
+                  <Text className="text-base mb-4 text-gray-700">
                     {selectedLost.description}
                   </Text>
+
+                  {/* Location */}
                   {selectedLost.location && (
                     <View className="flex-row items-center mb-2">
-                      <MaterialIcons name="location-on" size={16} color="#6b7280" />
-                      <Text className="text-gray-600 ml-1">
-                        {selectedLost.location}
-                      </Text>
+                      <MaterialIcons name="location-on" size={18} color="#2563eb" />
+                      <Text className="text-gray-700 ml-2">{selectedLost.location}</Text>
                     </View>
                   )}
+
+                  {/* Category */}
                   {selectedLost.category && (
                     <View className="flex-row items-center mb-2">
-                      <MaterialIcons name="label" size={16} color="#6b7280" />
-                      <Text className="text-gray-600 ml-1">
-                        {selectedLost.category}
-                      </Text>
+                      <MaterialIcons name="label" size={18} color="#2563eb" />
+                      <Text className="text-gray-700 ml-2">{selectedLost.category}</Text>
                     </View>
                   )}
+
+                  {/* Address */}
+                  {selectedLost.address && (
+                    <View className="flex-row items-center mb-2">
+                      <MaterialIcons name="home" size={18} color="#2563eb" />
+                      <Text className="text-gray-700 ml-2">{selectedLost.address}</Text>
+                    </View>
+                  )}
+
+                  {/* Phone */}
+                  {selectedLost.phone && (
+                    <TouchableOpacity
+                      onPress={() => Linking.openURL(`tel:${selectedLost.phone}`)}
+                      className="flex-row items-center mb-2"
+                    >
+                      <MaterialIcons name="call" size={18} color="#2563eb" />
+                      <Text className="text-blue-600 ml-2 underline">
+                        {selectedLost.phone}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+
+                  {/* Email */}
+                  {selectedLost.email && (
+                    <TouchableOpacity
+                      onPress={() => Linking.openURL(`mailto:${selectedLost.email}`)}
+                      className="flex-row items-center mb-2"
+                    >
+                      <MaterialIcons name="email" size={18} color="#2563eb" />
+                      <Text className="text-blue-600 ml-2 underline">
+                        {selectedLost.email}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+
+                  {/* Created / Updated */}
+                  <View className="mt-4">
+                    <Text className="text-xs text-gray-500">
+                      Created: {selectedLost.createdAt.toDate().toLocaleString()}
+                    </Text>
+                    <Text className="text-xs text-gray-500">
+                      Updated: {selectedLost.updatedAt.toDate().toLocaleString()}
+                    </Text>
+                  </View>
                 </>
               )}
 
+              {/* Close Button */}
               <TouchableOpacity
-                className="bg-red-500 px-4 py-3 rounded mt-4 self-center"
+                className="bg-red-500 px-4 py-3 rounded mt-6 self-center"
                 onPress={() => setModalVisible(false)}
               >
-                <Text className="text-white font-bold">Close</Text>
+                <Text className="text-white font-bold text-center">Close</Text>
               </TouchableOpacity>
             </ScrollView>
           </View>

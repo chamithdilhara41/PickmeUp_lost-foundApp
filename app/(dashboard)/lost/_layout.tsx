@@ -2,7 +2,7 @@ import { View, Text } from "react-native"
 import React from "react"
 import { Stack } from "expo-router"
 
-const TaskLayout = () => {
+const LostLayout = () => {
   return (
     <Stack screenOptions={{ animation: "slide_from_right" }}>
       <Stack.Screen name="index" options={{ headerShown: false }} />
@@ -11,4 +11,4 @@ const TaskLayout = () => {
   )
 }
 
-export default TaskLayout
+export default LostLayout
