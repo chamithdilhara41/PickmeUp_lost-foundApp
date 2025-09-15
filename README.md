@@ -35,11 +35,15 @@ PickMeUp is a **mobile application** that helps users **report, track, and find 
 
 ## Screenshots 📷
 
-*(Replace with actual screenshots from your app)*  
+## Screenshots 📷
 
-| Home Screen | Add Item | Item Details |
-|------------|----------|--------------|
-| ![Home](screenshots/home.png) | ![Add Item](screenshots/add_item.png) | ![Details](screenshots/item_details.png) |
+| Home Screen | Login Screen | Register Screen | Profile Screen |
+|------------|--------------|----------------|----------------|
+| ![Home](screenshots/home.png) | ![Login](screenshots/login.png) | ![Register](screenshots/register.png) | ![Profile](screenshots/profile.png) |
+
+| Lost Items | Add Lost Item | Found Item | Add Found Item |
+|------------|----------------|------------|----------------|
+| ![Lost Items](screenshots/lostitems.png) | ![Add Lost Item](screenshots/addLostItem.png) | ![Found Item](screenshots/founditem.png) | ![Add Found Item](screenshots/addFoundItem.png) |
 
 ---
 
