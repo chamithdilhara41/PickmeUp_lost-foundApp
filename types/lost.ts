@@ -10,6 +10,12 @@ export interface Lost {
   category?: string        // ✅ new: for filtering
   status: "lost" | "found" // ✅ new: lost or found item
   userId: string
+  recoveryDetails?: {
+    finderName?: string;
+    contactInfo?: string;
+    recoveryLocation?: string;
+    notes?: string;
+  };
   createdAt: Date
   updatedAt: Date
 }
