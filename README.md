@@ -43,14 +43,6 @@ PickMeUp is a **mobile application** that helps users **report, track, and find 
 
 ---
 
-## Demo GIF 🎬
-
-*(Replace with your actual demo GIF)*  
-
-![App Demo](screenshots/demo.gif)  
-
----
-
 ## Installation & Setup ⚙️
 
 ### Prerequisites
