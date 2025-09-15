@@ -261,8 +261,11 @@ const ProfileScreen = () => {
 
   const formatDate = (date: any) => {
     if (!date) return "Unknown date";
-    const dateObj = date instanceof Date ? date : new Date(date);
-    return dateObj.toLocaleDateString() + " " + dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const dateObj = date instanceof Date ? date : date.toDate();
+    return dateObj.toLocaleDateString() + " " + dateObj.toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
   };
 
   if (!user) {
