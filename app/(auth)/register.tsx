@@ -62,7 +62,7 @@ const Register = () => {
           {/* Logo and Header */}
           <View className="items-center mb-8">
             <View className="bg-blue-100 p-5 rounded-2xl mb-4">
-              <Text className="text-3xl font-bold text-blue-600">PicMeUp</Text>
+              <Text className="text-3xl font-bold text-blue-600">PickMeUp</Text>
             </View>
             <Text className="text-2xl font-bold text-gray-800">Create Account</Text>
             <Text className="text-gray-500 mt-2 text-center">

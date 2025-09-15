@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useEffect, useState, useMemo } from "react";
 import { lostRef, deleteLost } from "@/services/lostService";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialIcons, Ionicons, Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { Lost } from "@/types/lost";
 import { useLoader } from "@/context/LoaderContext";
@@ -55,9 +55,9 @@ const LostScreen = () => {
     return () => unsubscribe();
   }, []);
 
-  // Search + Filter + Sort
+  // Filter only items with status "lost" + Search + Filter + Sort
   const filteredItems = useMemo(() => {
-    let items = [...lostItems];
+    let items = lostItems.filter(item => item.status === "lost");
 
     // Search
     if (searchQuery) {
@@ -91,7 +91,7 @@ const LostScreen = () => {
   };
 
   const handleDelete = (id: string) => {
-    Alert.alert("Delete", "Are you sure you want to delete this item?", [
+    Alert.alert("Delete Item", "Are you sure you want to delete this item?", [
       { text: "Cancel", style: "cancel" },
       {
         text: "Delete",
@@ -100,8 +100,9 @@ const LostScreen = () => {
           try {
             showLoader();
             await deleteLost(id);
+            Alert.alert("Success", "Item deleted successfully");
           } catch (err) {
-            console.log("Error deleting lost item", err);
+            Alert.alert("Error", "Failed to delete item");
           } finally {
             hideLoader();
           }
@@ -110,235 +111,200 @@ const LostScreen = () => {
     ]);
   };
 
+  const formatDate = (date: any) => {
+    if (!date) return "Unknown date";
+    const dateObj = date instanceof Date ? date : date.toDate();
+    return dateObj.toLocaleDateString() + " " + dateObj.toLocaleTimeString([], { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
+
   return (
-    <View className="flex-1 bg-white">
+    <View className="flex-1 bg-gray-50">
       {/* Header */}
-      <Text className="text-4xl font-bold p-4 pt-10 text-blue-600">
-        Lost Items
-      </Text>
+      <View className="bg-white px-6 pt-12 pb-4">
+        <View className="flex-row justify-between items-center mb-4">
+          <Text className="text-4xl font-bold text-gray-800">Lost Items</Text>
+          <TouchableOpacity
+            onPress={() => router.push("/(dashboard)/lost/new")}
+            className="bg-blue-600 p-3 rounded-xl shadow-sm"
+          >
+            <MaterialIcons name="add" size={24} color="white" />
+          </TouchableOpacity>
+        </View>
 
-      {/* Add Button */}
-      <View className="absolute bottom-5 right-5 z-10">
-        <Pressable
-          className="bg-blue-500 rounded-full p-5 shadow-lg"
-          onPress={() => router.push("/(dashboard)/lost/new")}
-        >
-          <MaterialIcons name="add" size={24} color="#fff" />
-        </Pressable>
-      </View>
-
-      {/* Search Bar */}
-      <View className="flex-row items-center bg-gray-100 rounded-full px-4 py-3 mx-4 mt-2 shadow-sm border border-gray-300">
-        <MaterialIcons name="search" size={20} color="gray" />
-        <TextInput
-          placeholder="Search by title, description or district..."
-          className="flex-1 ml-2 text-base"
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          clearButtonMode="while-editing"
-        />
-        {searchQuery.length > 0 && (
-          <Pressable onPress={() => setSearchQuery("")} className="p-1">
-            <MaterialIcons name="close" size={18} color="gray" />
-          </Pressable>
-        )}
+        {/* Search Bar */}
+        <View className="flex-row items-center bg-gray-100 rounded-xl px-4 py-3 shadow-sm">
+          <MaterialIcons name="search" size={20} color="#6B7280" />
+          <TextInput
+            placeholder="Search lost items..."
+            className="flex-1 ml-2 text-gray-800"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholderTextColor="#9CA3AF"
+          />
+          {searchQuery.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchQuery("")}>
+              <MaterialIcons name="close" size={20} color="#6B7280" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {/* Filter + Sort */}
-      <View className="px-4 mt-3 mb-2">
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          className="py-1"
-        >
-          {["Electronics", "Clothes", "Pets", "Others"].map((cat) => (
-            <Pressable
+      <View className="bg-white px-6 py-3 border-b border-gray-200">
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} className="py-1">
+          {["Electronics", "Documents", "Jewelry", "Clothing", "Others"].map((cat) => (
+            <TouchableOpacity
               key={cat}
               onPress={() => setFilterCategory(filterCategory === cat ? null : cat)}
               className={`px-4 py-2 mr-2 rounded-full ${
                 filterCategory === cat 
-                  ? "bg-blue-600 border border-blue-700" 
-                  : "bg-gray-100 border border-gray-300"
+                  ? "bg-blue-600" 
+                  : "bg-gray-100"
               }`}
-              style={({ pressed }) => [
-                { 
-                  transform: [{ scale: pressed ? 0.95 : 1 }],
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 1 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 1.5,
-                  elevation: 2,
-                }
-              ]}
             >
-              <Text
-                className={`font-medium ${
-                  filterCategory === cat ? "text-white" : "text-gray-700"
-                }`}
-              >
+              <Text className={`font-medium ${
+                filterCategory === cat ? "text-white" : "text-gray-700"
+              }`}>
                 {cat}
               </Text>
-            </Pressable>
+            </TouchableOpacity>
           ))}
-
-          {/* Sort button */}
-          <Pressable
+          
+          <TouchableOpacity
             onPress={() => setSortOrder(sortOrder === "newest" ? "oldest" : "newest")}
-            className={`px-4 py-2 mr-2 rounded-full border ${
-              sortOrder === "newest" 
-                ? "bg-blue-100 border-blue-300" 
-                : "bg-blue-200 border-blue-400"
-            }`}
-            style={({ pressed }) => [
-              { 
-                transform: [{ scale: pressed ? 0.95 : 1 }],
-                shadowColor: "#000",
-                shadowOffset: { width: 0, height: 1 },
-                shadowOpacity: 0.2,
-                shadowRadius: 1.5,
-                elevation: 2,
-              }
-            ]}
+            className="bg-gray-100 px-4 py-2 mr-2 rounded-full"
           >
-            <Text className="text-blue-700 font-medium">
-              {sortOrder === "newest" ? "Newest" : "Oldest"}
+            <Text className="text-gray-700 font-medium">
+              Sort: {sortOrder === "newest" ? "Newest" : "Oldest"}
             </Text>
-          </Pressable>
+          </TouchableOpacity>
 
-          {/* Clear filters button */}
           {(filterCategory || searchQuery) && (
-            <Pressable
+            <TouchableOpacity
               onPress={() => {
                 setFilterCategory(null);
                 setSearchQuery("");
               }}
-              className="px-4 py-2 mr-2 rounded-full bg-gray-200 border border-gray-400"
-              style={({ pressed }) => [
-                { 
-                  transform: [{ scale: pressed ? 0.95 : 1 }],
-                  shadowColor: "#000",
-                  shadowOffset: { width: 0, height: 1 },
-                  shadowOpacity: 0.2,
-                  shadowRadius: 1.5,
-                  elevation: 2,
-                }
-              ]}
+              className="bg-red-100 px-4 py-2 rounded-full"
             >
-              <Text className="text-gray-700 font-medium">Clear All</Text>
-            </Pressable>
+              <Text className="text-red-700 font-medium">Clear All</Text>
+            </TouchableOpacity>
           )}
         </ScrollView>
       </View>
 
       {/* Active filter indicator */}
       {filterCategory && (
-        <View className="px-4 mb-1">
-          <Text className="text-sm text-blue-600">
-            Filtering by: <Text className="font-bold">{filterCategory}</Text>
+        <View className="bg-blue-50 px-6 py-2">
+          <Text className="text-blue-700 text-sm">
+            Filtering by: <Text className="font-semibold">{filterCategory}</Text>
           </Text>
         </View>
       )}
 
-      {/* Loader */}
+      {/* Content */}
       {loading ? (
         <View className="flex-1 justify-center items-center">
-          <ActivityIndicator size="large" color="#3b82f6" />
-          <Text className="mt-2 text-gray-500">Loading lost items...</Text>
+          <ActivityIndicator size="large" color="#3B82F6" />
+          <Text className="mt-3 text-gray-500">Loading lost items...</Text>
+        </View>
+      ) : filteredItems.length === 0 ? (
+        <View className="flex-1 justify-center items-center px-6">
+          <Feather name="search" size={48} color="#9CA3AF" />
+          <Text className="text-lg text-gray-500 mt-4 text-center">
+            {searchQuery || filterCategory ? "No matching lost items found" : "No lost items reported yet"}
+          </Text>
+          <Text className="text-gray-400 text-center mt-2">
+            {searchQuery || filterCategory ? "Try adjusting your search or filters" : "Be the first to report a lost item"}
+          </Text>
         </View>
       ) : (
-        <ScrollView className="mt-3 mb-20">
-          {filteredItems.length === 0 ? (
-            <View className="flex-1 justify-center items-center mt-10">
-              <MaterialIcons name="search-off" size={50} color="#9ca3af" />
-              <Text className="text-center text-gray-500 mt-4 text-lg">
-                No lost items found
-              </Text>
-              {(filterCategory || searchQuery) && (
-                <Text className="text-center text-gray-400 mt-2">
-                  Try adjusting your search or filters
-                </Text>
+        <ScrollView className="flex-1 px-6 py-4">
+          {filteredItems.map((lost) => (
+            <View
+              key={lost.id}
+              className="bg-white rounded-2xl p-4 mb-4 shadow-sm border border-gray-200"
+            >
+              {/* Images */}
+              {lost.serverImageUrls && lost.serverImageUrls.length > 0 && (
+                <ScrollView 
+                  horizontal 
+                  className="mb-3"
+                  showsHorizontalScrollIndicator={false}
+                >
+                  {lost.serverImageUrls.map((url, index) => (
+                    <Image
+                      key={index}
+                      source={{ uri: url }}
+                      className="w-20 h-20 rounded-lg mr-2"
+                      resizeMode="cover"
+                    />
+                  ))}
+                </ScrollView>
               )}
-            </View>
-          ) : (
-            filteredItems.map((lost) => (
-              <View
-                key={lost.id}
-                className="bg-blue-50 p-4 mb-3 rounded-xl mx-4 shadow-md border border-blue-100"
-              >
-                {/* Thumbnail images */}
-                {lost.serverImageUrls && lost.serverImageUrls.length > 0 && (
-                  <ScrollView 
-                    horizontal 
-                    className="mb-3"
-                    showsHorizontalScrollIndicator={false}
-                  >
-                    {lost.serverImageUrls.map((url, index) => (
-                      <Image
-                        key={index}
-                        source={{ uri: url }}
-                        className="w-20 h-20 rounded-lg mr-2"
-                        resizeMode="cover"
-                      />
-                    ))}
-                  </ScrollView>
-                )}
 
-                <Text className="text-lg font-bold text-blue-700">
+              <View className="flex-row justify-between items-start mb-2">
+                <Text className="text-lg font-semibold text-gray-800 flex-1">
                   {lost.title}
                 </Text>
-
-                {lost.location && (
-                  <View className="flex-row items-center mt-1">
-                    <MaterialIcons name="location-on" size={14} color="#6b7280" />
-                    <Text className="text-sm text-gray-500 ml-1">
-                      {lost.location}
-                    </Text>
-                  </View>
-                )}
-                {lost.category && (
-                  <View className="flex-row items-center mt-1">
-                    <MaterialIcons name="label" size={14} color="#6b7280" />
-                    <Text className="text-sm text-gray-500 ml-1">
-                      {lost.category}
-                    </Text>
-                  </View>
-                )}
-
-                <View className="flex-row flex-wrap mt-3">
-                  <TouchableOpacity
-                    className="bg-blue-600 px-3 py-2 rounded mr-2 mb-2"
-                    onPress={() => handleViewDetails(lost)}
-                  >
-                    <Text className="text-white font-semibold text-sm">
-                      View Details
-                    </Text>
-                  </TouchableOpacity>
-
-                  {/* Edit & Delete for owner */}
-                  {user?.uid === lost.userId && (
-                    <>
-                      <TouchableOpacity
-                        className="bg-yellow-400 px-3 py-2 rounded mr-2 mb-2"
-                        onPress={() => router.push(`/(dashboard)/lost/${lost.id}`)}
-                      >
-                        <Text className="text-black font-bold text-sm">
-                          Edit
-                        </Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        className="bg-red-500 px-3 py-2 rounded mr-2 mb-2"
-                        onPress={() => lost.id && handleDelete(lost.id)}
-                      >
-                        <Text className="text-white font-bold text-sm">
-                          Delete
-                        </Text>
-                      </TouchableOpacity>
-                    </>
-                  )}
+                <View className="bg-red-100 px-2 py-1 rounded-full">
+                  <Text className="text-red-700 text-xs font-medium">LOST</Text>
                 </View>
               </View>
-            ))
-          )}
+
+              <Text className="text-gray-600 mb-3">{lost.description}</Text>
+
+              <View className="space-y-1 mb-3">
+                {lost.location && (
+                  <View className="flex-row items-center">
+                    <MaterialIcons name="location-on" size={16} color="#6B7280" />
+                    <Text className="text-gray-500 text-sm ml-1">{lost.location}</Text>
+                  </View>
+                )}
+                
+                {lost.category && (
+                  <View className="flex-row items-center">
+                    <MaterialIcons name="category" size={16} color="#6B7280" />
+                    <Text className="text-gray-500 text-sm ml-1">{lost.category}</Text>
+                  </View>
+                )}
+              </View>
+
+              <Text className="text-gray-400 text-xs mb-3">
+                Reported {formatDate(lost.createdAt)}
+              </Text>
+
+              <View className="flex-row justify-between">
+                <TouchableOpacity
+                  onPress={() => handleViewDetails(lost)}
+                  className="bg-blue-600 px-4 py-2 rounded-xl flex-row items-center"
+                >
+                  <MaterialIcons name="visibility" size={16} color="white" />
+                  <Text className="text-white font-medium text-sm ml-1">View Details</Text>
+                </TouchableOpacity>
+
+                {user?.uid === lost.userId && (
+                  <View className="flex-row space-x-2">
+                    <TouchableOpacity
+                      onPress={() => router.push(`/(dashboard)/lost/${lost.id}`)}
+                      className="bg-gray-200 p-2 rounded-xl"
+                    >
+                      <MaterialIcons name="edit" size={16} color="#4B5563" />
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      onPress={() => lost.id && handleDelete(lost.id)}
+                      className="bg-red-100 p-2 rounded-xl"
+                    >
+                      <MaterialIcons name="delete" size={16} color="#DC2626" />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </View>
+          ))}
         </ScrollView>
       )}
 
@@ -350,107 +316,101 @@ const LostScreen = () => {
         onRequestClose={() => setModalVisible(false)}
       >
         <View className="flex-1 bg-black/60 justify-center items-center p-4">
-          <View className="w-full bg-white rounded-xl p-4 max-h-[80%] shadow-lg">
+          <View className="w-full bg-white rounded-2xl p-6 max-h-[80%]">
             <ScrollView showsVerticalScrollIndicator={false}>
               {selectedLost && (
                 <>
-                  {/* Title */}
-                  <Text className="text-2xl font-bold text-blue-700 mb-3">
-                    {selectedLost.title}
-                  </Text>
+                  <View className="flex-row justify-between items-center mb-4">
+                    <Text className="text-2xl font-bold text-gray-800">
+                      {selectedLost.title}
+                    </Text>
+                    <TouchableOpacity onPress={() => setModalVisible(false)}>
+                      <MaterialIcons name="close" size={24} color="#6B7280" />
+                    </TouchableOpacity>
+                  </View>
+
+                  {/* Status Badge */}
+                  <View className="bg-red-100 px-3 py-1 rounded-full self-start mb-4">
+                    <Text className="text-red-700 text-sm font-medium">LOST ITEM</Text>
+                  </View>
 
                   {/* Images */}
-                  {selectedLost.serverImageUrls &&
-                    selectedLost.serverImageUrls.length > 0 && (
-                      <ScrollView
-                        horizontal
-                        className="mb-3"
-                        showsHorizontalScrollIndicator={false}
-                      >
-                        {selectedLost.serverImageUrls.map((url, index) => (
-                          <Image
-                            key={index}
-                            source={{ uri: url }}
-                            className="w-52 h-52 mr-2 rounded-lg"
-                            resizeMode="cover"
-                          />
-                        ))}
-                      </ScrollView>
-                    )}
+                  {selectedLost.serverImageUrls && selectedLost.serverImageUrls.length > 0 && (
+                    <ScrollView horizontal className="mb-4" showsHorizontalScrollIndicator={false}>
+                      {selectedLost.serverImageUrls.map((url, index) => (
+                        <Image
+                          key={index}
+                          source={{ uri: url }}
+                          className="w-64 h-64 mr-3 rounded-xl"
+                          resizeMode="cover"
+                        />
+                      ))}
+                    </ScrollView>
+                  )}
 
-                  {/* Description */}
-                  <Text className="text-base mb-4 text-gray-700">
+                  <Text className="text-gray-700 text-base mb-4 leading-6">
                     {selectedLost.description}
                   </Text>
 
-                  {/* Location */}
-                  {selectedLost.location && (
-                    <View className="flex-row items-center mb-2">
-                      <MaterialIcons name="location-on" size={18} color="#2563eb" />
-                      <Text className="text-gray-700 ml-2">{selectedLost.location}</Text>
-                    </View>
-                  )}
+                  <View className="space-y-3 mb-4">
+                    {selectedLost.location && (
+                      <View className="flex-row items-start">
+                        <MaterialIcons name="location-on" size={20} color="#3B82F6" className="mt-1" />
+                        <Text className="text-gray-700 ml-3 flex-1">{selectedLost.location}</Text>
+                      </View>
+                    )}
 
-                  {/* Category */}
-                  {selectedLost.category && (
-                    <View className="flex-row items-center mb-2">
-                      <MaterialIcons name="label" size={18} color="#2563eb" />
-                      <Text className="text-gray-700 ml-2">{selectedLost.category}</Text>
-                    </View>
-                  )}
+                    {selectedLost.category && (
+                      <View className="flex-row items-start">
+                        <MaterialIcons name="category" size={20} color="#3B82F6" className="mt-1" />
+                        <Text className="text-gray-700 ml-3 flex-1">{selectedLost.category}</Text>
+                      </View>
+                    )}
 
-                  {/* Address */}
-                  {selectedLost.address && (
-                    <View className="flex-row items-center mb-2">
-                      <MaterialIcons name="home" size={18} color="#2563eb" />
-                      <Text className="text-gray-700 ml-2">{selectedLost.address}</Text>
-                    </View>
-                  )}
+                    {selectedLost.address && (
+                      <View className="flex-row items-start">
+                        <MaterialIcons name="home" size={20} color="#3B82F6" className="mt-1" />
+                        <Text className="text-gray-700 ml-3 flex-1">{selectedLost.address}</Text>
+                      </View>
+                    )}
 
-                  {/* Phone */}
-                  {selectedLost.phone && (
-                    <TouchableOpacity
-                      onPress={() => Linking.openURL(`tel:${selectedLost.phone}`)}
-                      className="flex-row items-center mb-2"
-                    >
-                      <MaterialIcons name="call" size={18} color="#2563eb" />
-                      <Text className="text-blue-600 ml-2 underline">
-                        {selectedLost.phone}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
+                    {selectedLost.phone && (
+                      <TouchableOpacity
+                        onPress={() => Linking.openURL(`tel:${selectedLost.phone}`)}
+                        className="flex-row items-start"
+                      >
+                        <MaterialIcons name="call" size={20} color="#3B82F6" className="mt-1" />
+                        <Text className="text-blue-600 ml-3 flex-1 underline">{selectedLost.phone}</Text>
+                      </TouchableOpacity>
+                    )}
 
-                  {/* Email */}
-                  {selectedLost.email && (
-                    <TouchableOpacity
-                      onPress={() => Linking.openURL(`mailto:${selectedLost.email}`)}
-                      className="flex-row items-center mb-2"
-                    >
-                      <MaterialIcons name="email" size={18} color="#2563eb" />
-                      <Text className="text-blue-600 ml-2 underline">
-                        {selectedLost.email}
-                      </Text>
-                    </TouchableOpacity>
-                  )}
+                    {selectedLost.email && (
+                      <TouchableOpacity
+                        onPress={() => Linking.openURL(`mailto:${selectedLost.email}`)}
+                        className="flex-row items-start"
+                      >
+                        <MaterialIcons name="email" size={20} color="#3B82F6" className="mt-1" />
+                        <Text className="text-blue-600 ml-3 flex-1 underline">{selectedLost.email}</Text>
+                      </TouchableOpacity>
+                    )}
+                  </View>
 
-                  {/* Created / Updated */}
-                  <View className="mt-4">
-                    <Text className="text-xs text-gray-500">
-                      Created: {selectedLost.createdAt.toDate().toLocaleString()}
+                  <View className="border-t border-gray-200 pt-3">
+                    <Text className="text-gray-500 text-sm">
+                      Reported: {formatDate(selectedLost.createdAt)}
                     </Text>
-                    <Text className="text-xs text-gray-500">
-                      Updated: {selectedLost.updatedAt.toDate().toLocaleString()}
+                    <Text className="text-gray-500 text-sm">
+                      Updated: {formatDate(selectedLost.updatedAt)}
                     </Text>
                   </View>
                 </>
               )}
 
-              {/* Close Button */}
               <TouchableOpacity
-                className="bg-red-500 px-4 py-3 rounded mt-6 self-center"
                 onPress={() => setModalVisible(false)}
+                className="bg-red-600 px-6 py-3 rounded-xl mt-6"
               >
-                <Text className="text-white font-bold text-center">Close</Text>
+                <Text className="text-white font-semibold text-center">Close</Text>
               </TouchableOpacity>
             </ScrollView>
           </View>
