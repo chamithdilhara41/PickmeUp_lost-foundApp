@@ -1,50 +1,72 @@
-# Welcome to your Expo app 👋
+# PickMeUp - Lost & Found App 📱
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![React Native](https://img.shields.io/badge/React_Native-v0.71-blue)](https://reactnative.dev/)
+[![Expo](https://img.shields.io/badge/Expo-v49.0.0-green)](https://expo.dev/)
 
-## Get started
+PickMeUp is a **mobile application** that helps users **report, track, and find lost or found items** in their local area. It uses **location-based matching**, **Firebase Authentication**, and **Firestore** to provide a seamless lost & found experience.  
 
-1. Install dependencies
+---
 
-   ```bash
-   npm install
-   ```
+## Table of Contents 📖
 
-2. Start the app
+- [Features](#features-✨)  
+- [Screenshots](#screenshots-📷)  
+- [Demo GIF](#demo-gif-🎬)  
+- [Installation & Setup](#installation--setup-⚙️)  
+- [Usage](#usage-🛠️)  
+- [Tech Stack](#tech-stack-🧰)  
+- [Project Structure](#project-structure-📂)  
+- [Contributing](#contributing-🤝)  
+- [Resources](#resources-📚)  
+- [License](#license-📝)  
+- [Community & Support](#community--support-💬)  
 
-   ```bash
-   npx expo start
-   ```
+---
 
-In the output, you'll find options to open the app in a
+## Features ✨
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- **Report Lost & Found Items** – Upload photos, descriptions, and locations.  
+- **User Profiles** – Track your lost and found items.  
+- **Photo Uploads** – Multiple images stored securely in Firebase.  
+- **Clean UI & Navigation** – Smooth navigation with Expo Router.  
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## Screenshots 📷
 
-When you're ready, run:
+*(Replace with actual screenshots from your app)*  
+
+| Home Screen | Add Item | Item Details |
+|------------|----------|--------------|
+| ![Home](screenshots/home.png) | ![Add Item](screenshots/add_item.png) | ![Details](screenshots/item_details.png) |
+
+---
+
+## Demo GIF 🎬
+
+*(Replace with your actual demo GIF)*  
+
+![App Demo](screenshots/demo.gif)  
+
+---
+
+## Installation & Setup ⚙️
+
+### Prerequisites
+- Node.js v16+  
+- npm or yarn  
+- Expo CLI (`npm install -g expo-cli`)  
+
+### Steps
 
 ```bash
-npm run reset-project
-```
+# Clone the repository
+git clone https://github.com/yourusername/pickmeup-app.git
+cd pickmeup-app
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+# Install dependencies
+npm install
 
-## Learn more
-
-To learn more about developing your project with Expo, look at the following resources:
-
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+# Start the Expo server
+npx expo start
