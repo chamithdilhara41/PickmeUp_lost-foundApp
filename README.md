@@ -54,7 +54,7 @@ PickMeUp is a **mobile application** that helps users **report, track, and find 
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/pickmeup-app.git
+git clone https://github.com/chamithdilhara41/PickmeUp_lost-foundApp.git
 cd pickmeup-app
 
 # Install dependencies
